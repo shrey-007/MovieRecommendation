@@ -1,0 +1,66 @@
+#version: '3.7'
+#
+#services:
+#  mongodb:
+#    image: mongo:latest
+#    container_name: mongodb
+##    networks:
+##      - appnetwork
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - mongodb2-data:/data/db
+#
+##  flask-api:
+##    image: movieapi
+##    container_name: flask-api
+##    ports:
+#      - "5000:5000"  # Exposing Flask API port
+##    networks:
+##      - appnetwork
+#
+#  spring-boot-app:
+#    image: movietommy
+#    container_name: spring-boot-app
+#    ports:
+#      - "8080:8080"  # Exposing Spring Boot application port
+#    depends_on:
+#      - mongodb
+##      - flask-api
+#    environment:
+#      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/movies
+##    networks:
+##      - appnetwork
+#
+#
+#volumes:
+#  mongodb2-data:
+#
+##networks:
+##  appnetwork:
+
+# ----------------------------------------------  BELOW CODE WAS WORKING -------------------------------------------------------------------->
+
+#version: '3.7'
+#
+#services:
+#  mongodb:
+#    image: mongo:latest
+#    container_name: mongodb
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - mongodb2-data:/data/db
+#
+#  spring-boot-app:
+#    image: movietommy
+#    container_name: spring-boot-app
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - mongodb
+#    environment:
+#      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/movies
+#
+#volumes:
+#  mongodb2-data:
