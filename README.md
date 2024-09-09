@@ -12,8 +12,10 @@ http://localhost:8080/movies/recommend?movie=Avatar
 4. Run this command "chmod +x setup.sh"
 5. Run this command "./setup.sh", it will download all dependencies
 
+---
 
-## Basic Idea of Tools Used-:
+# Basic Idea of Tools Used-:
+# Logging
 
 ### 1. **SLF4J (Simple Logging Facade for Java)**
 
@@ -74,3 +76,34 @@ http://localhost:8080/movies/recommend?movie=Avatar
 - **SLF4J** should always be used as the logging API in your application to provide flexibility in choosing the underlying logging framework.
 
 Would you like to know how to set up logging with any specific framework, or do you have more questions about these logging tools?
+
+---
+
+# Testing
+For testing in your Spring Boot application, you should use both **JUnit** and **Mockito** together, as they serve different but complementary purposes:
+
+### 1. **JUnit**
+- **Purpose**: JUnit is a testing framework that provides the foundation for writing and running tests in Java. It allows you to define test cases, assert conditions, and organize test suites.
+- **Use Cases**:
+  - Writing unit tests for individual methods and classes.
+  - Running tests with annotations like `@Test`, `@BeforeEach`, `@AfterEach`, etc.
+  - Checking the correctness of your code by asserting expected outcomes.
+
+### 2. **Mockito**
+- **Purpose**: Mockito is a mocking framework that complements JUnit by allowing you to create mock objects. These mocks simulate the behavior of real objects, enabling you to test components in isolation.
+- **Use Cases**:
+  - Mocking dependencies of the class under test (e.g., services, repositories) to avoid testing real implementations.
+  - Verifying interactions between components, such as ensuring a specific method was called with the expected arguments.
+  - Simulating different scenarios, such as exceptions or specific return values from dependencies.
+
+### Recommended Approach
+
+- **Use JUnit** as the primary testing framework to define and run your tests.
+- **Use Mockito** to mock dependencies and isolate the component under test.
+
+### Conclusion
+
+- **Use JUnit** for creating and running your test cases.
+- **Use Mockito** for mocking dependencies and verifying interactions.
+
+Combining these two frameworks allows you to write comprehensive and effective tests for your Spring Boot application.
