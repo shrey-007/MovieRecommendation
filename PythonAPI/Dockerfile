@@ -1,22 +1,19 @@
-# Use an official Python runtime as a base image
-FROM python:3.9-slim
+FROM python
 
-# Set the working directory in the container
+# Create a directory for your application
 WORKDIR /app
 
-# Install the required Python packages directly
-RUN pip install --no-cache-dir --default-timeout=100 \
-    Flask==2.0.3 \
-    pandas==1.4.0 \
-    numpy==1.21.0 \
-    scikit-learn==1.0.2 \
-    nltk==3.6.7
+# Copy your requirements.txt file
+COPY requirements.txt .
 
-# Copy the current directory contents into the container at /app,
+# Install dependencies from requirements.txt
+RUN pip install -r requirements.txt
+
+# Copy your .pkl files to the container
 COPY . .
 
-# Expose port 5000 to the host
+# Expose the port your Flask app will listen on
 EXPOSE 5000
 
-# Run the Flask API when the container launches
+# Specify the command to run when the container starts
 CMD ["python", "app.py"]
