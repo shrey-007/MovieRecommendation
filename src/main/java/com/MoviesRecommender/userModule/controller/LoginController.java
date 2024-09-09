@@ -3,6 +3,7 @@ package com.MoviesRecommender.userModule.controller;
 import com.MoviesRecommender.userModule.entity.User;
 import com.MoviesRecommender.userModule.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.Optional;
 
 @Controller
+@Slf4j
 public class LoginController {
     @Autowired
     UserRepository userRepository;
@@ -30,9 +32,9 @@ public class LoginController {
     @RequestMapping(value = "/doLogin",method = RequestMethod.POST)
     public String doLogin(@ModelAttribute User user, HttpSession session,Model model){
         User userFromDatabase = userRepository.findByEmail(user.getEmail());
+        log.info("User logged in the application: {}", userFromDatabase);
         if(userFromDatabase.getPassword().equals(user.getPassword())){
             session.setAttribute("user",userFromDatabase);
-            System.out.println(userFromDatabase+"going to dashboard--------------------------->");
             return "redirect:/dashboard";
         }
         return "login";
@@ -40,7 +42,7 @@ public class LoginController {
 
     @RequestMapping(value = "/doRegister",method = RequestMethod.POST)
     public String register(@ModelAttribute User user){
-        System.out.println(user);
+        log.info("User registered in the application: {}", user);
         userRepository.save(user);
         return "login";
     }
