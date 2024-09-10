@@ -18,6 +18,19 @@
 
 </head>
 <body>
+
+<!-- Search Box-->
+<div class="search-container my-4">
+    <!--isee input lenge ki kya search krna hai and voh backend pr bhejege and result search result mai bhejege        -->
+    <!--onkeyup is an javascipt event, toh jaise hi user search bar mai kuch daalega toh search function call hoga      -->
+    <input onkeyup="search()" id="search-input" type="text" class="form-control" placeholder="Search">
+    <div class="search-result">
+        <!--this is search result-->
+    </div>
+</div>
+
+
+
 <div class="container mt-4">
     <h1 class="mb-4">Movies</h1>
     <div class="row">
@@ -39,5 +52,6 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script th:src="@{/js/dashboard.js}"></script>
 </body>
 </html>

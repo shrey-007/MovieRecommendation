@@ -11,6 +11,7 @@ import java.util.List;
 public interface MovieRepository extends MongoRepository<Movie, String> {
 
     Movie findByTitle(String title);
-//    List<Movie> findAll(Pageable pageable);
+
+    List<Movie> findByTitleContaining(String searchQuery);
 
 }
