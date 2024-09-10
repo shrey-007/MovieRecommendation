@@ -3,18 +3,19 @@
 <head>
     <title>Movie List</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-    .card {
-        border: 1px solid #ddd;
-        border-radius: 10px;
-    }
-    .card-img-top {
-        border-bottom: 1px solid #ddd;
-    }
-    .card-body {
-        text-align: center;
-    }
-</style>
+<!--    <style>-->
+<!--    .card {-->
+<!--        border: 1px solid #ddd;-->
+<!--        border-radius: 10px;-->
+<!--    }-->
+<!--    .card-img-top {-->
+<!--        border-bottom: 1px solid #ddd;-->
+<!--    }-->
+<!--    .card-body {-->
+<!--        text-align: center;-->
+<!--    }-->
+<!--</style>-->
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
 
 </head>
 <body>
@@ -39,7 +40,7 @@
         <!-- A particular movie, iske uper kahi bhi click kro toh new page khulega isliye anchor tag mai daala hai -->
             <a th:href="@{/movies/movie(title=${movie.title})}" class="card-link">
                 <div class="card">
-                    <img th:src="@{/images/movie-placeholder.jpg}" class="card-img-top" alt="Movie Poster">
+                    <img th:src="@{/images/movie.jpg}" class="card-img-top" alt="Movie Poster">
                     <div class="card-body">
                         <h5 class="card-title" th:text="${movie.title}">Movie Title</h5>
                         <p class="card-text" th:text="${movie.overview}">Movie Overview</p>

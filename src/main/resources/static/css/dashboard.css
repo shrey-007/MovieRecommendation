@@ -1,0 +1,55 @@
+/* Dark theme for movie cards */
+body {
+    background-color: #0f0a0a; /* Dark background color */
+    color: #ffffff; /* Light text color for all text */
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif; /* Sets a clean, sans-serif font */
+}
+.card {
+    height: 300px; /* Fixed height for uniform card size */
+    overflow: hidden; /* Hide overflowing content */
+    background-color: #960000; /* Dark background color */
+    color: #f39a9a; /* Light text color for contrast */
+    border: 1px solid #444; /* Subtle border for card */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+    transition: transform 0.3s; /* Smooth transition for hover effect */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+}
+
+.card-overview {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    color: #cccccc; /* Slightly lighter color for overview text */
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit; /* Keeps link color consistent with text */
+}
+
+.card-img-top {
+    border-bottom: 1px solid #444; /* Border separating the image and body */
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
