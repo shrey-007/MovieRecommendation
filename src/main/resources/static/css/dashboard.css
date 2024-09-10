@@ -53,3 +53,47 @@ body {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
+/* Container for search input */
+.search-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 0 20px; /* Adds horizontal padding */
+    position: relative; /* Necessary for absolute positioning of search results */
+}
+
+/* Search input styling */
+#search-input {
+    width: 500px; /* Desired width of the input */
+    max-width: 100%; /* Prevents the input from exceeding its container width */
+    box-sizing: border-box; /* Includes padding and border in the total width */
+}
+
+/* Search result styling */
+.search-result {
+    position: absolute; /* Position relative to the closest positioned ancestor (.search-container) */
+    top: 100%; /* Positions the result directly below the input */
+    left: 50%; /* Start positioning from the center of the container */
+    transform: translateX(-50%); /* Center the element horizontally */
+    background: white;
+    width: 500px; /* Match the width of the input field */
+    padding: 10px;
+    border: 1px solid grey;
+    display: none; /* Hide the result by default */
+    color: black;
+    z-index: 1000; /* Ensures the result appears above other content */
+}
+
+/* Custom list item styling */
+.customList {
+    background-color: #1c1b1b;
+    color: white;
+}
+.customList:hover {
+    background-color: black;
+    color: red;
+    text-decoration:none;
+}
+
+
+

@@ -29,3 +29,21 @@ const search=()=>{
     //agar null nhi hai toh simply jo search-result vaala div hidden tha usko show krdo.
   }
 }
+
+// Function to hide search results
+function hideResults() {
+    const results = document.getElementById(".customList");
+    results.style.display = "none"; // Hide the search results
+}
+
+// Add an event listener to detect clicks outside of the search container
+document.addEventListener("click", function(event) {
+    const searchContainer = document.querySelector(".search-container");
+    if (!searchContainer.contains(event.target)) {
+        hideResults(); // Hide the search results if the click is outside the search container
+    }
+});
+// Prevent clicks inside the search container from hiding the results
+document.querySelector(".search-container").addEventListener("click", function(event) {
+    event.stopPropagation(); // Stop the event from propagating to the document
+});
