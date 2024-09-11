@@ -33,10 +33,10 @@ public class UserController {
     MovieRecommender movieRecommender;
 
     @RequestMapping("/dashboard")
-    public String dashboard(Model model, HttpSession session){
+    public String dashboard(Model model){
 
         // get the user
-        User user=(User) session.getAttribute("user");
+        User user=(User) model.getAttribute("user");
         log.info("Fetching movies watched by the user {} ",user);
 
         // First we will fetch all movies watched by the user earlier

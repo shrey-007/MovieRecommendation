@@ -19,32 +19,32 @@ public class LoginController {
     @Autowired
     UserRepository userRepository;
 
-    @RequestMapping("/")
+    @RequestMapping("/login")
     public String login(){
         return "login";
     }
 
-    @RequestMapping("/register")
-    public String register(){
-        return "register";
-    }
+//    @RequestMapping("/register")
+//    public String register(){
+//        return "register";
+//    }
 
-    @RequestMapping(value = "/doLogin",method = RequestMethod.POST)
-    public String doLogin(@ModelAttribute User user, HttpSession session,Model model){
-        User userFromDatabase = userRepository.findByEmail(user.getEmail());
-        log.info("User logged in the application: {}", userFromDatabase);
-        if(userFromDatabase.getPassword().equals(user.getPassword())){
-            session.setAttribute("user",userFromDatabase);
-            return "redirect:/dashboard";
-        }
-        return "login";
-    }
+//    @RequestMapping(value = "/doLogin",method = RequestMethod.POST)
+//    public String doLogin(@ModelAttribute User user, HttpSession session,Model model){
+//        User userFromDatabase = userRepository.findByEmail(user.getEmail());
+//        log.info("User logged in the application: {}", userFromDatabase);
+//        if(userFromDatabase.getPassword().equals(user.getPassword())){
+//            session.setAttribute("user",userFromDatabase);
+//            return "redirect:/dashboard";
+//        }
+//        return "login";
+//    }
 
-    @RequestMapping(value = "/doRegister",method = RequestMethod.POST)
-    public String register(@ModelAttribute User user){
-        log.info("User registered in the application: {}", user);
-        userRepository.save(user);
-        return "login";
-    }
+//    @RequestMapping(value = "/doRegister",method = RequestMethod.POST)
+//    public String register(@ModelAttribute User user){
+//        log.info("User registered in the application: {}", user);
+//        userRepository.save(user);
+//        return "login";
+//    }
 
 }

@@ -107,3 +107,13 @@ For testing in your Spring Boot application, you should use both **JUnit** and *
 - **Use Mockito** for mocking dependencies and verifying interactions.
 
 Combining these two frameworks allows you to write comprehensive and effective tests for your Spring Boot application.
+
+---
+
+# Spring Security
+### Working of OAuth2 Login -:
+1. Whenever, a page is hit securityFilterChain() function is called from the class  SecurityConfig, which tells which is
+the login page url and what to do after successful login. So it first redirects the user to the login page, as it has information which os login page
+2. When the login is done successfully by Google, the again control comes to securityFilterChain() which runs the successHandler method which is present class OAuthAuthenticationSuccessHandler as onAuthenticationSuccess()
+3. This function onAuthenticationSuccess(), gets the details of the logged user and finds whether it is login case or signup case, if signup case then it first saves the user in database and then redirects to dashboard and if login case then it redirects to dashboard
+4. I have also created a RootController , which runs every single time before any controller. Since onAuthenticationSuccess() redirects user to the dashboard controller so before calling dashboard controller , spring first calls RootController which gets the User object from the database and add it to model object , through which any controller can get the logged user inforamtion
