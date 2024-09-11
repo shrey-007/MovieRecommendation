@@ -40,9 +40,9 @@ public class MoviesController {
     }
 
     @RequestMapping("/updateWatchList")
-    public String updateWatchListOfUser(@RequestParam String title, HttpSession session){
+    public String updateWatchListOfUser(@RequestParam String title, Model model){
 
-        User user=(User) session.getAttribute("user");
+        User user=(User) model.getAttribute("user");
 
         UserWatchesMovie userWatchesMovie = new UserWatchesMovie(user.getId(),title);
 

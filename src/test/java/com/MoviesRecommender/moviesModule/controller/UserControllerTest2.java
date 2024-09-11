@@ -36,9 +36,6 @@ public class UserControllerTest2 {
     private MovieRecommender movieRecommender;
 
     @Mock
-    private HttpSession session;
-
-    @Mock
     private Model model;
 
     @InjectMocks
@@ -71,7 +68,7 @@ public class UserControllerTest2 {
     @Test
     public void testDashboard() {
         // Mock session behavior
-        when(session.getAttribute("user")).thenReturn(mockUser);
+        when(model.getAttribute("user")).thenReturn(mockUser);
 
         // Mock repository behavior
         when(userWatchesMovieRepository.findAllByUserId(mockUser.getId())).thenReturn(mockWatchedMovies);
@@ -87,7 +84,7 @@ public class UserControllerTest2 {
         when(movieRepository.findAll(any(PageRequest.class))).thenReturn(mockPage);
 
         // Call the dashboard method
-        String viewName = userController.dashboard(model, session);
+        String viewName = userController.dashboard(model);
 
         // Verify interactions and assertions
         verify(userWatchesMovieRepository, times(1)).findAllByUserId(mockUser.getId());

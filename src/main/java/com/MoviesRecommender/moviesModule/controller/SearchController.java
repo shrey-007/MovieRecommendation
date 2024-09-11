@@ -21,8 +21,7 @@ public class SearchController {
     MovieRepository movieRepository;
 
     @GetMapping("/search/{query}")
-    public ResponseEntity<?> search(@PathVariable("query") String query, HttpSession session, Model model){
-
+    public ResponseEntity<?> search(@PathVariable("query") String query, Model model){
 
         log.info("User Searched for movies {} ",query);
 
