@@ -48,9 +48,9 @@
         <div class="col-md-4 mb-4" th:each="movie : ${similarMovies}">
             <a th:href="@{/movies/movie(title=${movie.title})}" class="card-link">
                 <div class="card" id="movieCard">
-                    <img th:src="@{/images/movie-placeholder.jpg}" class="card-img-top" alt="Movie Poster">
+<!--                    <img th:src="@{/images/movie-placeholder.jpg}" class="card-img-top" alt="Movie Poster">-->
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${movie.title}">Movie Title</h5>
+                        <h5 class="card-title" th:text="${movie.title}" style="color:#290118;" >Movie Title</h5>
                         <p class="card-title" th:text="${movie.overview}">Movie Title</p>
                     </div>
                 </div>

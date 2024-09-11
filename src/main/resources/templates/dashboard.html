@@ -40,9 +40,9 @@
         <!-- A particular movie, iske uper kahi bhi click kro toh new page khulega isliye anchor tag mai daala hai -->
             <a th:href="@{/movies/movie(title=${movie.title})}" class="card-link">
                 <div class="card">
-                    <img th:src="@{/images/movie.jpg}" class="card-img-top" alt="Movie Poster">
+<!--                    <img th:src="@{/images/movie.jpg}" class="card-img-top" alt="Movie Poster">-->
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${movie.title}">Movie Title</h5>
+                        <h5 class="card-title" th:text="${movie.title}"  style="color:#290118;">Movie Title</h5>
                         <p class="card-text" th:text="${movie.overview}">Movie Overview</p>
                     </div>
                 </div>

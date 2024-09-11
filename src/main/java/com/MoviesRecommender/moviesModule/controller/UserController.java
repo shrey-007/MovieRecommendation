@@ -41,6 +41,15 @@ public class UserController {
 
         // First we will fetch all movies watched by the user earlier
         List<UserWatchesMovie> titleOfMoviesWatchedByUser = userWatchesMovieRepository.findAllByUserId(user.getId());
+
+        // reverse the order, coz jo movie latest dekhi uski recommendation pehle dikhani hai, but voh arraylist mai last
+        // mai hai toh last mai dikhegi uski recommendation, but apan ko pehle dikhani hai toh reverse krdo
+        List<UserWatchesMovie> reveserOfTitleOfMoviesWatchedByUser=new ArrayList<>();
+        for (int i = titleOfMoviesWatchedByUser.size()-1; i >=0 ; i--) {
+            reveserOfTitleOfMoviesWatchedByUser.add(titleOfMoviesWatchedByUser.get(i));
+        }
+        titleOfMoviesWatchedByUser=reveserOfTitleOfMoviesWatchedByUser;
+
         log.info("Fetching title of the movies watched by the user {} -> {} ",user,titleOfMoviesWatchedByUser);
 
         // Now fetch the movies, corresponding to the title
