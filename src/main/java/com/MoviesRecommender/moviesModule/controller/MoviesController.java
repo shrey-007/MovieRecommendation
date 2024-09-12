@@ -2,6 +2,7 @@ package com.MoviesRecommender.moviesModule.controller;
 
 import com.MoviesRecommender.moviesModule.entity.Movie;
 import com.MoviesRecommender.moviesModule.helper.MovieRecommender;
+import com.MoviesRecommender.moviesModule.repository.MovieRepository;
 import com.MoviesRecommender.userModule.entity.User;
 import com.MoviesRecommender.userModule.entity.UserWatchesMovie;
 import com.MoviesRecommender.userModule.repository.UserWatchesMovieRepository;
@@ -20,6 +21,9 @@ import java.util.List;
 @RequestMapping("/movies")
 @Slf4j
 public class MoviesController {
+
+    @Autowired
+    MovieRepository movieRepository;
     @Autowired
     private MovieRecommender movieRecommender;
 
@@ -29,13 +33,16 @@ public class MoviesController {
     @GetMapping("/movie")
     public String movie(@RequestParam String title, Model model) {
 
-        log.info(" User requested for the recommendation of movie {} ", title);
-        // get the string of recommended movies
-        List<Movie> similarMoviesTitle=movieRecommender.recommendMovies(title);
-        log.info(" Got recommendation of movie {} ", title);
+        Movie currentMovie = movieRepository.findByTitle(title);
 
-        model.addAttribute("title",title);
-        model.addAttribute("similarMovies",similarMoviesTitle);
+        log.info(" User requested for the recommendation of movie {} ", currentMovie);
+        // get the recommended movies
+        List<Movie> similarMovies=movieRecommender.recommendMovies(title);
+
+        log.info(" Got recommendation of movie {} ", similarMovies);
+
+        model.addAttribute("currentMovie",currentMovie);
+        model.addAttribute("similarMovies",similarMovies);
         return "movie";
     }
 

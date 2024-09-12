@@ -28,7 +28,6 @@ public class RootController {
 
         // find the email of the user jisne login kra
         if(authentication instanceof OAuth2AuthenticationToken){
-            System.out.println("auth2");
             OAuth2User oauth2User= (OAuth2User)authentication.getPrincipal();
             email = oauth2User.getAttribute("email").toString();
         }
