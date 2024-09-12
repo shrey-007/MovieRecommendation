@@ -34,6 +34,7 @@ public class MovieRecommender {
         // Get the movies from the title
         List<Movie> movies = new ArrayList<>();
         for (String title: movieRecommendationsResponse.getRecommendations()){
+            if(title.equals(null) || title.equals("")){continue;}
             Movie movie = movieRepository.findByTitle(title);
             movies.add(movie);
         }

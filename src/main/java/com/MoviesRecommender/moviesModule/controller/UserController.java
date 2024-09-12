@@ -15,10 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import java.util.Random;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @Slf4j
@@ -69,6 +67,12 @@ public class UserController {
             similarMovies.addAll(similarMoviesToCurrentMovie);
         }
         log.info("Fetched the similar movies for the user {} -> {}",user,similarMovies);
+
+        // Now filter out the duplicate movies
+        Set<Movie> uniqueSimilarMovies = new HashSet<>(similarMovies);
+        similarMovies = new ArrayList<>(uniqueSimilarMovies);
+
+        log.info("Fetched the unique similar movies for the user {} -> {}",user,similarMovies);
 
         // if the size of the list, is very big then we will remove some movies
         if(similarMovies.size()>50){
