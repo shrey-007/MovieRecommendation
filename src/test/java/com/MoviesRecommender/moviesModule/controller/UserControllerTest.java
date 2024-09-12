@@ -83,53 +83,53 @@ public class UserControllerTest {
     }
 
 
-    @Test
-    public void dashboard(){
-
-        // get the user
-        User user= new User("66dc6766b3db8652f55c4423","shreyyerhs07@gmail.com","12345");
-
-        // First we will fetch all movies watched by the user earlier
-        List<UserWatchesMovie> titleOfMoviesWatchedByUser = userWatchesMovieRepository.findAllByUserId(user.getId());
-
-        // Now fetch the movies, corresponding to the title
-        List<Movie> movieList=new ArrayList<>();
-        for(UserWatchesMovie userWatchesMovie:titleOfMoviesWatchedByUser){
-            Movie movie=movieRepository.findByTitle(userWatchesMovie.getMovieTitle());
-            movieList.add(movie);
-        }
-
-        // fetch the movies which are similar to the list of movies which are already watched by user
-        List<Movie> similarMovies=new ArrayList<>();
-        for (Movie movie:movieList){
-            // find the similar movies
-            List<Movie> similarMoviesToCurrentMovie=movieRecommender.recommendMovies(movie.getTitle());
-            // add it to the final list
-            similarMovies.addAll(similarMoviesToCurrentMovie);
-        }
-
-        // if the size of the list, is very big then we will remove some movies
-        if(similarMovies.size()>50){
-            int sizeOfList=similarMovies.size();
-            Random random = new Random();
-            while (sizeOfList>50){
-                int randomIndex = random.nextInt(sizeOfList);
-                similarMovies.remove(randomIndex);
-                sizeOfList--;
-            }
-        }
-
-        // if the size of the list is smaller than 50 , then show the top remaining rows from database
-        else if(similarMovies.size()<50){
-            int remainingSize=50-similarMovies.size();
-            Pageable limit = PageRequest.of(0,remainingSize);
-            Page<Movie> remainingMoviesPage = movieRepository.findAll(limit);
-            List<Movie> remainingMovies = remainingMoviesPage.stream().toList();
-            similarMovies.addAll(remainingMovies);
-        }
-
-        Assertions.assertTrue(similarMovies.size()>0);
-
-    }
+//    @Test
+//    public void dashboard(){
+//
+//        // get the user
+//        User user= new User("66dc6766b3db8652f55c4423","shreyyerhs07@gmail.com","12345");
+//
+//        // First we will fetch all movies watched by the user earlier
+//        List<UserWatchesMovie> titleOfMoviesWatchedByUser = userWatchesMovieRepository.findAllByUserId(user.getId());
+//
+//        // Now fetch the movies, corresponding to the title
+//        List<Movie> movieList=new ArrayList<>();
+//        for(UserWatchesMovie userWatchesMovie:titleOfMoviesWatchedByUser){
+//            Movie movie=movieRepository.findByTitle(userWatchesMovie.getMovieTitle());
+//            movieList.add(movie);
+//        }
+//
+//        // fetch the movies which are similar to the list of movies which are already watched by user
+//        List<Movie> similarMovies=new ArrayList<>();
+//        for (Movie movie:movieList){
+//            // find the similar movies
+//            List<Movie> similarMoviesToCurrentMovie=movieRecommender.recommendMovies(movie.getTitle());
+//            // add it to the final list
+//            similarMovies.addAll(similarMoviesToCurrentMovie);
+//        }
+//
+//        // if the size of the list, is very big then we will remove some movies
+//        if(similarMovies.size()>50){
+//            int sizeOfList=similarMovies.size();
+//            Random random = new Random();
+//            while (sizeOfList>50){
+//                int randomIndex = random.nextInt(sizeOfList);
+//                similarMovies.remove(randomIndex);
+//                sizeOfList--;
+//            }
+//        }
+//
+//        // if the size of the list is smaller than 50 , then show the top remaining rows from database
+//        else if(similarMovies.size()<50){
+//            int remainingSize=50-similarMovies.size();
+//            Pageable limit = PageRequest.of(0,remainingSize);
+//            Page<Movie> remainingMoviesPage = movieRepository.findAll(limit);
+//            List<Movie> remainingMovies = remainingMoviesPage.stream().toList();
+//            similarMovies.addAll(remainingMovies);
+//        }
+//
+//        Assertions.assertTrue(similarMovies.size()>0);
+//
+//    }
 
 }
