@@ -39,7 +39,7 @@
 
 <div>
     <form action="/movies/updateWatchList">
-        <input type="hidden" name="title" th:value="${title}">
+        <input type="hidden" name="title" th:value="${currentMovie.title}">
         <button type="submit">Watched</button>
     </form>
 </div>

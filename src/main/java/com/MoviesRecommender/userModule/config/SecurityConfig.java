@@ -23,25 +23,40 @@ public class SecurityConfig {
     @Autowired
     private OAuthAuthenticationSuccessHandler oAuthAuthenticationSuccessHandler;
 
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(customUserDetailService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return daoAuthenticationProvider;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(authorize->{
-            authorize.requestMatchers("/user/**").authenticated();
-            authorize.anyRequest().permitAll();
-        });
-
-
-        log.info("securityFilterChain() method is called:");
-        // oauth2
-        httpSecurity.oauth2Login(oauth->{
-            // isi login page mai hi sign in with google ka button hai
-            log.info("User is redirected to login controller which returns login.html");
-            oauth.loginPage("/login");
-            oauth.successHandler(oAuthAuthenticationSuccessHandler);
-        });
+        httpSecurity
+                .authenticationProvider(authenticationProvider())  // Set authentication provider
+                .authorizeHttpRequests(authorize -> {
+                    authorize.requestMatchers("/user/**").authenticated();
+                    authorize.anyRequest().permitAll();
+                })
+                .formLogin(formLogin -> {
+                    formLogin.loginPage("/login")
+                            .loginProcessingUrl("/authenticate")
+                            .defaultSuccessUrl("/dashboard", true)  // Redirect to /dashboard on success
+                            .usernameParameter("email")
+                            .passwordParameter("password");
+                })
+                .oauth2Login(oauth -> {
+                    oauth.loginPage("/login")
+                            .successHandler(oAuthAuthenticationSuccessHandler);
+                });
 
         return httpSecurity.build();
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }
+

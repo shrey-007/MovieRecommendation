@@ -1,7 +1,9 @@
 package com.MoviesRecommender.userModule.controller;
 
 import com.MoviesRecommender.userModule.entity.User;
+import com.MoviesRecommender.userModule.helper.LoggedUserManager;
 import com.MoviesRecommender.userModule.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @ControllerAdvice
+@Slf4j
 public class RootController {
-    Logger logger= LoggerFactory.getLogger(RootController.class);
-
     @Autowired
     private UserRepository userRepository;
 
@@ -24,18 +25,12 @@ public class RootController {
     public void sendLoggedUserInformationToView(Model model, Authentication authentication){
         if(authentication==null){return;}
 
-        String email="";
+        String email= LoggedUserManager.getEmailOfLoggedUser(authentication);
 
-        // find the email of the user jisne login kra
-        if(authentication instanceof OAuth2AuthenticationToken){
-            OAuth2User oauth2User= (OAuth2User)authentication.getPrincipal();
-            email = oauth2User.getAttribute("email").toString();
-        }
-
-        logger.info(email+"------------------------------------------------------BEFORE CONTROLLER----------------------------------------------");
+        log.info(email+"------------------------------------------------------BEFORE CONTROLLER----------------------------------------------");
         // get the user from email
         User user=userRepository.findByEmail(email);
-        logger.info("user is {} ",user);
+        log.info("user is {} ",user);
         model.addAttribute("user",user);
     }
 
