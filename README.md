@@ -111,9 +111,149 @@ Combining these two frameworks allows you to write comprehensive and effective t
 ---
 
 # Spring Security
-### Working of OAuth2 Login -:
-1. Whenever, a page is hit securityFilterChain() function is called from the class  SecurityConfig, which tells which is
-the login page url and what to do after successful login. So it first redirects the user to the login page, as it has information which os login page
-2. When the login is done successfully by Google, the again control comes to securityFilterChain() which runs the successHandler method which is present class OAuthAuthenticationSuccessHandler as onAuthenticationSuccess()
-3. This function onAuthenticationSuccess(), gets the details of the logged user and finds whether it is login case or signup case, if signup case then it first saves the user in database and then redirects to dashboard and if login case then it redirects to dashboard
-4. I have also created a RootController , which runs every single time before any controller. Since onAuthenticationSuccess() redirects user to the dashboard controller so before calling dashboard controller , spring first calls RootController which gets the User object from the database and add it to model object , through which any controller can get the logged user inforamtion
+1. Before any API is hit, filters are called for preprocessing. If the request is valid then it forwarded to the controller else it is discarded. We can also use Filers for postprocessing
+2. Fir request jaaegi AuthenticationManager ko , joki find krega request ke according ki konse Authentication Provider ko request forward kre. There are many Authenticators like DaoAuthenticationProvider.
+3. Ab jis bhi AuthenticationProvider ko request gyi uske paas login form mai di gyi information hai, but jo user ka asli password hai voh nhi pata use, toh vo pata krega through UserDetailService(loadUserByUsername()). This UserDetailService will get the real password of user from database using UserRepository
+4. Ab UserRepository database user ki info degi UserDetailService ko , UserDetailService user ki information degi AuthenticationProvider ko. Now AuthenticationProvider ke paas login form ki details and database ki details dono hai, toh ab voh match karega. If it matches successfully toh SecurityContext mai authentication set ho jaaega
+
+Below is detailed explanation-:  
+
+Spring Security provides authentication, authorization, and other security-related features to Spring-based applications. Here's a breakdown of its internal workings:
+
+### 1. **Filter Chain**
+- **Spring Security Filter Chain** is the backbone of Spring Security. It intercepts HTTP requests and applies security logic.
+- The chain contains a set of **security filters** that are applied in a specific order to process authentication, authorization, and other security-related actions.
+- The `DelegatingFilterProxy` in `web.xml` or Spring Boot’s `@EnableWebSecurity` annotation delegates requests to the filter chain.
+- Filters like `UsernamePasswordAuthenticationFilter`, `BasicAuthenticationFilter`, and `OAuth2LoginAuthenticationFilter` handle different types of authentication.
+
+### 2. **Authentication**
+- **Authentication** is the process of verifying the identity of a user or system.
+- Spring Security uses the **`AuthenticationManager`** to handle authentication.
+- The `AuthenticationManager` delegates the authentication to one or more **`AuthenticationProvider`** instances. These providers are responsible for verifying credentials (e.g., username/password).
+- A typical provider is `DaoAuthenticationProvider`, which retrieves user details from a `UserDetailsService`.
+
+#### Workflow:
+- A filter (e.g., `UsernamePasswordAuthenticationFilter`) intercepts a login request.
+- It creates an **`Authentication`** object (e.g., `UsernamePasswordAuthenticationToken`) containing user credentials.
+- The `AuthenticationManager` authenticates this token by passing it to the `AuthenticationProvider`.
+- On success, it stores the authentication result in the **`SecurityContext`**.
+
+### 3. **SecurityContext and SecurityContextHolder**
+- Once authentication is successful, the **`SecurityContext`** holds the `Authentication` object for the session.
+- The `SecurityContext` is stored in the **`SecurityContextHolder`**, which is a thread-local storage mechanism.
+- This allows Spring Security to access the user’s authentication status throughout the request.
+
+### 4. **Authorization**
+- After authentication, **authorization** determines if a user has the right permissions to access certain resources.
+- The **`AccessDecisionManager`** takes care of this by checking if the user’s roles match the required roles for a resource.
+- It works alongside the **`GrantedAuthority`** objects stored in the `Authentication` object.
+- The `@PreAuthorize`, `@Secured`, or access control annotations can be used to apply fine-grained authorization checks at the method level.
+
+### 5. **UserDetailsService**
+- The **`UserDetailsService`** is responsible for loading user-specific data (e.g., username, password, roles).
+- It returns a **`UserDetails`** object containing the user’s credentials and granted authorities.
+- This service is used by `DaoAuthenticationProvider` for verifying credentials.
+
+### 6. **Password Encoding**
+- Spring Security uses **`PasswordEncoder`** (e.g., `BCryptPasswordEncoder`) to hash and verify passwords.
+- When a user logs in, the raw password is encoded and compared to the stored encoded password for verification.
+
+### 7. **CSRF Protection**
+- Spring Security includes built-in **CSRF (Cross-Site Request Forgery)** protection.
+- It requires a token to be included in non-GET HTTP requests (e.g., POST, PUT, DELETE) to ensure the request is legitimate.
+
+### 8. **Session Management**
+- Spring Security can manage user sessions, including tracking if a user is logged in and how many sessions are active.
+- It can also handle session fixation attacks by changing the session ID after successful login.
+
+### 9. **OAuth2 / JWT Authentication**
+- Spring Security integrates with **OAuth2** providers, handling OAuth2 login flow and token-based authentication (e.g., JWT).
+- OAuth2 login involves filters like `OAuth2LoginAuthenticationFilter` and uses OAuth-specific tokens in the `SecurityContext`.
+
+### Summary
+The core components of Spring Security (filter chain, authentication, authorization, and session management) work together to provide robust security to a Spring application. The flexibility of using custom filters, providers, and user services allows for extensive customization.
+
+---
+
+# Working of Password Encoder
+`BCryptPasswordEncoder` is a password hashing function commonly used in Spring Boot for securely storing passwords. It uses the BCrypt algorithm, which is designed to be slow, making it resistant to brute force attacks. Here's how it works:
+
+1. **Salting**: Every password is hashed with a unique salt. This means even if two users have the same password, their hashed passwords will be different. This makes rainbow table attacks ineffective.
+
+2. **Hashing**: The password is combined with the salt, and the BCrypt algorithm hashes the result. The BCrypt algorithm is intentionally slow by design, which helps mitigate brute force attacks.
+
+3. **Encoding Strength**: BCrypt allows for configurable "work factor" (also known as the cost factor), which increases the complexity and time it takes to hash the password as computing power increases over time.
+
+4. **Hash Verification**: When a user logs in, the password provided is hashed using the same salt stored with the original hash, and the resulting hash is compared to the stored one. If they match, the password is correct.
+
+Let’s walk through an example of how hashing works with a password, hash function, and salt.
+
+### Assumptions:
+- **Password**: `mypassword123`
+- **Salt**: `randomSalt123`
+- **Hash Function**: Simplified hash function (e.g., SHA-256 for demonstration, although BCrypt would use a more complex process)
+
+Here’s the step-by-step process:
+
+### Step 1: Original Password
+The user enters a password:
+
+```
+Password: mypassword123
+```
+
+### Step 2: Generate Salt
+A random salt is generated. In this case, let’s assume the salt is:
+
+```
+Salt: randomSalt123
+```
+
+### Step 3: Concatenate Password and Salt
+Now, we concatenate the password and the salt to form a new string:
+
+```
+Password + Salt: mypassword123randomSalt123
+```
+
+### Step 4: Apply the Hash Function
+Next, we apply a hash function (e.g., SHA-256) to the concatenated password and salt.
+
+Let’s assume the output of `SHA-256` for `mypassword123randomSalt123` is:
+
+```
+Hash: c038eb7bb2227e2d9e05a74a22fbbaf3b0c0b3a4fa43dce8f676f5dbf7c0a048
+```
+
+### Step 5: Store the Salt and Hashed Password
+Now, we store both the **salt** and the **hashed password** in the database. Typically, the salt is stored along with the hash so that it can be used for verification later.
+
+```
+Stored Hash: c038eb7bb2227e2d9e05a74a22fbbaf3b0c0b3a4fa43dce8f676f5dbf7c0a048
+Stored Salt: randomSalt123
+```
+
+### Step 6: Verifying the Password
+When the user logs in again, the following process happens:
+1. The entered password (e.g., `mypassword123`) is concatenated with the stored salt (`randomSalt123`).
+2. The same hash function is applied to this combination.
+3. The resulting hash is compared to the stored hash.
+
+If the hash matches, the password is correct.
+
+### Example in Code (SHA-256 for Simplicity):
+
+Here’s a simplified Java example using `SHA-256` (BCrypt would involve more steps, but this illustrates the concept).
+
+```
+
+### Output:
+```
+Password: mypassword123
+Salt: randomSalt123
+Hashed Password: 9U5OYz9rb1fzZcSR+xA+2bC6RxaL/zMXfVeqyE6KMLk=
+```
+
+In this case, the **salted and hashed password** is stored securely. When a user tries to log in, the same salt is applied, and the hash is recalculated and compared to the stored hash for verification.
+
+This demonstrates the process of **password salting and hashing** to protect passwords from common attacks. In real applications, using a slower and more secure algorithm like BCrypt is recommended.

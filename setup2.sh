@@ -1,3 +1,5 @@
+#The url in dashboard.js for the search bar will not work coz localhost is written in it
+
 # start database
 sudo systemctl start mongod
 

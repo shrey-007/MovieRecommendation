@@ -94,6 +94,10 @@ public class UserController {
             similarMovies.addAll(remainingMovies);
         }
 
+        // Since yaha uper extra movies add kri hai toh duplicates aa skte hai
+        Set<Movie> unique = new HashSet<>(similarMovies);
+        similarMovies = new ArrayList<>(unique);
+
         model.addAttribute("moviesList",similarMovies);
 
         return "dashboard";

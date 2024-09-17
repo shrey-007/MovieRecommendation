@@ -44,6 +44,7 @@ public class MoviesController {
 
         log.info(" Got recommendation of movie {} ", similarMovies);
 
+        // Avatar ke recommendation mai Avatar khud nhi dikhni chaiye
         Iterator<Movie> iterator = similarMovies.iterator();
         while (iterator.hasNext()) {
             Movie movie = iterator.next();
