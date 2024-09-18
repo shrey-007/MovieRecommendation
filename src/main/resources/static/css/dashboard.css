@@ -95,5 +95,12 @@ body {
     text-decoration:none;
 }
 
+/* Home button on movie page*/
+.homeButton a{
+    background-color:red;
+    color:white;
+    height:150px;
+    text-decoration:none;
+}
 
 

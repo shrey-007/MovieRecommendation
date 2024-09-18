@@ -42,11 +42,7 @@ public class UserController {
 
         // reverse the order, coz jo movie latest dekhi uski recommendation pehle dikhani hai, but voh arraylist mai last
         // mai hai toh last mai dikhegi uski recommendation, but apan ko pehle dikhani hai toh reverse krdo
-        List<UserWatchesMovie> reveserOfTitleOfMoviesWatchedByUser=new ArrayList<>();
-        for (int i = titleOfMoviesWatchedByUser.size()-1; i >=0 ; i--) {
-            reveserOfTitleOfMoviesWatchedByUser.add(titleOfMoviesWatchedByUser.get(i));
-        }
-        titleOfMoviesWatchedByUser=reveserOfTitleOfMoviesWatchedByUser;
+        Collections.reverse(titleOfMoviesWatchedByUser);
 
         log.info("Fetching title of the movies watched by the user {} -> {} ",user,titleOfMoviesWatchedByUser);
 
@@ -59,7 +55,9 @@ public class UserController {
         log.info("Fetching movies from title for the user {} ",user);
 
         // fetch the movies which are similar to the list of movies which are already watched by user
-        List<Movie> similarMovies=new ArrayList<>();
+        // Also they should be unique, same movie repeat nhi honi chaiye
+        // Also order change nhi hona movie ka coz last watched movie se similar movie pehle aani chaiye
+        Set<Movie> similarMovies=new LinkedHashSet<>();
         for (Movie movie:movieList){
             // find the similar movies
             List<Movie> similarMoviesToCurrentMovie=movieRecommender.recommendMovies(movie.getTitle());
@@ -68,37 +66,33 @@ public class UserController {
         }
         log.info("Fetched the similar movies for the user {} -> {}",user,similarMovies);
 
-        // Now filter out the duplicate movies
-        Set<Movie> uniqueSimilarMovies = new HashSet<>(similarMovies);
-        similarMovies = new ArrayList<>(uniqueSimilarMovies);
-
-        log.info("Fetched the unique similar movies for the user {} -> {}",user,similarMovies);
+        List<Movie> uniqueSimilarMovies = new ArrayList<>(similarMovies);
 
         // if the size of the list, is very big then we will remove some movies
-        if(similarMovies.size()>50){
-            int sizeOfList=similarMovies.size();
+        if(uniqueSimilarMovies.size()>50){
+            int sizeOfList=uniqueSimilarMovies.size();
             Random random = new Random();
             while (sizeOfList>50){
                 int randomIndex = random.nextInt(sizeOfList);
-                similarMovies.remove(randomIndex);
+                uniqueSimilarMovies.remove(randomIndex);
                 sizeOfList--;
             }
         }
 
         // if the size of the list is smaller than 50 , then show the top remaining rows from database
-        else if(similarMovies.size()<50){
-            int remainingSize=50-similarMovies.size();
+        else if(uniqueSimilarMovies.size()<50){
+            int remainingSize=50-uniqueSimilarMovies.size();
             Pageable limit = PageRequest.of(0,remainingSize);
             Page<Movie> remainingMoviesPage = movieRepository.findAll(limit);
             List<Movie> remainingMovies = remainingMoviesPage.stream().toList();
-            similarMovies.addAll(remainingMovies);
+            uniqueSimilarMovies.addAll(remainingMovies);
         }
 
         // Since yaha uper extra movies add kri hai toh duplicates aa skte hai
-        Set<Movie> unique = new HashSet<>(similarMovies);
-        similarMovies = new ArrayList<>(unique);
+        Set<Movie> finalUniqueMovies = new LinkedHashSet<>(uniqueSimilarMovies);
+        uniqueSimilarMovies = new ArrayList<>(finalUniqueMovies);
 
-        model.addAttribute("moviesList",similarMovies);
+        model.addAttribute("moviesList",uniqueSimilarMovies);
 
         return "dashboard";
     }

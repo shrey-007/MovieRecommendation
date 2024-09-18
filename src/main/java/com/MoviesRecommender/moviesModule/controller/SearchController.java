@@ -26,7 +26,7 @@ public class SearchController {
         log.info("User Searched for movies {} ",query);
 
         //fetch list of questions to be displayed on search bar, according to query
-        List<Movie> movieList = movieRepository.findByTitleContaining(query);
+        List<Movie> movieList = movieRepository.findByTitleContainingIgnoreCase(query);
 
         log.info("Search Results: {} ",movieList);
 
