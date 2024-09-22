@@ -30,35 +30,55 @@ public class MoviesController {
     @Autowired
     private UserWatchesMovieRepository userWatchesMovieRepository;
 
+    /** Replaced by Async call */
+//    @GetMapping("/movie")
+//    public String movie(@RequestParam String title, Model model) {
+//
+//        Movie currentMovie = movieRepository.findByTitle(title);
+//
+//        log.info(" User requested for the recommendation of movie {} ", currentMovie);
+//
+//        // get the recommended movies
+//        List<Movie> similarMovies=movieRecommender.recommendMovies(title);
+//        Set<Movie> uniqueSimilarMovies = new HashSet<>(similarMovies);
+//        similarMovies = new ArrayList<>(uniqueSimilarMovies);
+//
+//        log.info(" Got recommendation of movie {} ", similarMovies);
+//
+//        // Avatar ke recommendation mai Avatar khud nhi dikhni chaiye
+//        Iterator<Movie> iterator = similarMovies.iterator();
+//        while (iterator.hasNext()) {
+//            Movie movie = iterator.next();
+//            if (movie.getTitle().equals(title)) {
+//                iterator.remove();
+//            }
+//        }
+//
+//        log.info(" Removed duplicate movies {} ", similarMovies);
+//
+//        model.addAttribute("currentMovie",currentMovie);
+//        model.addAttribute("similarMovies",similarMovies);
+//        return "movie";
+//    }
+
     @GetMapping("/movie")
-    public String movie(@RequestParam String title, Model model) {
+    public String movie2(@RequestParam String title, Model model) {
 
         Movie currentMovie = movieRepository.findByTitle(title);
 
-        log.info(" User requested for the recommendation of movie {} ", currentMovie);
+        log.info("Controller /movies/movie is called");
 
-        // get the recommended movies
-        List<Movie> similarMovies=movieRecommender.recommendMovies(title);
-        Set<Movie> uniqueSimilarMovies = new HashSet<>(similarMovies);
-        similarMovies = new ArrayList<>(uniqueSimilarMovies);
+        log.info("User requested recommendation for movie: {}", title);
 
-        log.info(" Got recommendation of movie {} ", similarMovies);
+        // Trigger the asynchronous recommendation
+        String requestId = movieRecommender.recommendMoviesAsync(title);
 
-        // Avatar ke recommendation mai Avatar khud nhi dikhni chaiye
-        Iterator<Movie> iterator = similarMovies.iterator();
-        while (iterator.hasNext()) {
-            Movie movie = iterator.next();
-            if (movie.getTitle().equals(title)) {
-                iterator.remove();
-            }
-        }
-
-        log.info(" Removed duplicate movies {} ", similarMovies);
-
-        model.addAttribute("currentMovie",currentMovie);
-        model.addAttribute("similarMovies",similarMovies);
+        log.info("Calling the movieRecommender and returning the empty webpage", title);
+        model.addAttribute("currentMovie", currentMovie);
+        model.addAttribute("requestId", requestId);
         return "movie";
     }
+
 
     @RequestMapping("/updateWatchList")
     public String updateWatchListOfUser(@RequestParam String title, Model model){

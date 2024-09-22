@@ -54,27 +54,91 @@
     </form>
 </div>
 
+<!-- THIS IS REPLACED BY JAVASCRIPT BELOW -->
+
+<!--<div class="container mt-4">-->
+<!--    <h1 class="mb-4">Similar Movies</h1>-->
+<!--    <div class="row">-->
+<!--        &lt;!&ndash; Iterate over movieList &ndash;&gt;-->
+<!--        <div class="col-md-4 mb-4" th:each="movie : ${similarMovies}">-->
+<!--            <a th:href="@{/movies/movie(title=${movie.title})}" class="card-link">-->
+<!--                <div class="card" id="movieCard">-->
+<!--&lt;!&ndash;                    <img th:src="@{/images/movie-placeholder.jpg}" class="card-img-top" alt="Movie Poster">&ndash;&gt;-->
+<!--                    <div class="card-body">-->
+<!--                        <h5 class="card-title" th:text="${movie.title}" style="color:#290118;" >Movie Title</h5>-->
+<!--                        <p class="card-title" th:text="${movie.overview}">Movie Title</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
 <div class="container mt-4">
     <h1 class="mb-4">Similar Movies</h1>
-    <div class="row">
-        <!-- Iterate over movieList -->
-        <div class="col-md-4 mb-4" th:each="movie : ${similarMovies}">
-            <a th:href="@{/movies/movie(title=${movie.title})}" class="card-link">
-                <div class="card" id="movieCard">
-<!--                    <img th:src="@{/images/movie-placeholder.jpg}" class="card-img-top" alt="Movie Poster">-->
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${movie.title}" style="color:#290118;" >Movie Title</h5>
-                        <p class="card-title" th:text="${movie.overview}">Movie Title</p>
-                    </div>
-                </div>
-            </a>
-        </div>
+    <div id="movieContent" class="row">
+        <!-- This content will be replaced by the recommendations once ready -->
     </div>
+    <div th:value="${requestId}"></div>
 </div>
+
+
+<!--To paas to javascript-->
+<input type="hidden" id="hiddenRequestId" th:value="${requestId}"/>
+
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+var requestId = document.getElementById('hiddenRequestId').value;
+console.log("Request ID: ", requestId); // This should print the actual requestId
+
+
+    function checkRecommendations() {
+        $.ajax({
+            url: '/movie/status',
+            method: 'GET',
+            data: { requestId: requestId },
+            success: function(data) {
+                if (data && data.length > 0) {
+                    // Clear the existing content
+                    $('#movieContent').empty();
+
+                    // Iterate over the returned movie data and display it
+                    data.forEach(function(movie) {
+                        $('#movieContent').append(
+                            `<div class="col-md-4 mb-4">
+                                <a href="/movies/movie?title=${movie.title}" class="card-link">
+                                    <div class="card" id="movieCard">
+                                        <div class="card-body">
+                                            <h5 class="card-title" style="color:#290118;">${movie.title}</h5>
+                                            <p class="card-title">${movie.overview}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>`
+                        );
+                    });
+                } else {
+                    // Retry after 2 seconds
+                    setTimeout(checkRecommendations, 2000);
+                }
+            },
+            error: function() {
+                console.error("Error occurred while fetching movie recommendations.");
+            }
+        });
+    }
+
+    // Start checking for recommendations
+    checkRecommendations();
+});
+</script>
+
 </body>
 
 

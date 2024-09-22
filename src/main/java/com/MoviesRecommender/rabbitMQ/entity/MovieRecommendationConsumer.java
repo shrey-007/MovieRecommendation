@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import com.MoviesRecommender.moviesModule.entity.Movie;
 import com.MoviesRecommender.moviesModule.entity.MovieRecommendationsResponse;
@@ -48,6 +47,22 @@ public class MovieRecommendationConsumer {
         for (String title : movieRecommendationsResponse.getRecommendations()) {
             Movie movie = movieRepository.findByTitle(title);
             movies.add(movie);
+        }
+
+        // store only unique movies
+        Set<Movie> uniquesMovies = new HashSet<>(movies);
+        movies = new ArrayList<>(uniquesMovies);
+
+        // Get the current Movie
+        Movie currentMovie = movieRepository.findByTitle(message.getMovieTitle());
+
+        // Avatar ke recommendation mai Avatar khud ni aani chaiye
+        Iterator<Movie> iterator = movies.iterator();
+        while (iterator.hasNext()) {
+            Movie movie = iterator.next();
+            if (movie.getTitle().equals(currentMovie.getTitle())) {
+                iterator.remove();
+            }
         }
 
         // Store the result in the cache

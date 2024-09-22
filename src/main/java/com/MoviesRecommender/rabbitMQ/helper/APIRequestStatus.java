@@ -1,6 +1,6 @@
 package com.MoviesRecommender.rabbitMQ.helper;
 
-import com.MoviesRecommender.RabbitMQ.entity.MovieRecommendationConsumer;
+import com.MoviesRecommender.rabbitMQ.entity.MovieRecommendationConsumer;
 import com.MoviesRecommender.moviesModule.entity.Movie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
