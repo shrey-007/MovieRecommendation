@@ -13,6 +13,11 @@ cd ..
 sudo docker build -t flaskapp .
 sudo docker run -d -p 5000:5000 flaskapp
 
+## setup rabbit mq
+docker pull rabbitmq:4.0.0-rc.2-management
+docker run --rm -it -p 15672:15672 -p 5672:5672 rabbitmq:4.0.0-rc.2-management
+#credentials are guest, guest, login and create exchange(exchange_demo), queue(queue_demo) and bind them through routing key routing_key_demo
+
 # run application
 cd DockerImages/springboot
 java -jar MoviesRecommender-0.0.1-SNAPSHOT.jar
