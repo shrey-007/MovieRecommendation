@@ -3,6 +3,7 @@ package com.MoviesRecommender.moviesModule.controller;
 import com.MoviesRecommender.moviesModule.entity.Movie;
 import com.MoviesRecommender.moviesModule.helper.MovieRecommender;
 import com.MoviesRecommender.moviesModule.repository.MovieRepository;
+import com.MoviesRecommender.moviesModule.repository.UserDashboardRepository;
 import com.MoviesRecommender.userModule.entity.User;
 import com.MoviesRecommender.userModule.entity.UserWatchesMovie;
 import com.MoviesRecommender.userModule.repository.UserWatchesMovieRepository;
@@ -30,7 +31,10 @@ public class UserController {
     @Autowired
     MovieRecommender movieRecommender;
 
-    @RequestMapping("/dashboard")
+    @Autowired
+    UserDashboardRepository userDashboardRepository;
+
+    @RequestMapping("/dashboard2")
     public String dashboard(Model model){
 
         // get the user
@@ -93,6 +97,18 @@ public class UserController {
         uniqueSimilarMovies = new ArrayList<>(finalUniqueMovies);
 
         model.addAttribute("moviesList",uniqueSimilarMovies);
+
+        return "dashboard";
+    }
+
+    @RequestMapping("/dashboard")
+    public String dashboardFromDatabase(Model model){
+        User user=(User) model.getAttribute("user");
+
+        List<Movie> movies = userDashboardRepository.findByUserId(user.getId());
+        log.info("Getting user: {} dashboard from database {} ",user.getUsername(),movies);
+
+        model.addAttribute("moviesList",movies);
 
         return "dashboard";
     }

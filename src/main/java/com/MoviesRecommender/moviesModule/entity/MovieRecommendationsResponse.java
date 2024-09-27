@@ -10,6 +10,8 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+// When the response from python API, will come it will be in JSON format, so we have to convert it into the java class
+// So this is the reason of creating this class
 public class MovieRecommendationsResponse {
     @JsonProperty("recommendations")
     private List<String> recommendations;

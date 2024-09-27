@@ -1,8 +1,10 @@
 package com.MoviesRecommender.moviesModule.controller;
 
 import com.MoviesRecommender.moviesModule.entity.Movie;
+import com.MoviesRecommender.moviesModule.entity.UserDashboard;
 import com.MoviesRecommender.moviesModule.helper.MovieRecommender;
 import com.MoviesRecommender.moviesModule.repository.MovieRepository;
+import com.MoviesRecommender.moviesModule.repository.UserDashboardRepository;
 import com.MoviesRecommender.userModule.entity.User;
 import com.MoviesRecommender.userModule.entity.UserWatchesMovie;
 import com.MoviesRecommender.userModule.repository.UserWatchesMovieRepository;
@@ -29,6 +31,9 @@ public class MoviesController {
 
     @Autowired
     private UserWatchesMovieRepository userWatchesMovieRepository;
+
+    @Autowired
+    private UserDashboardRepository userDashboardRepository;
 
     /** Replaced by Async call */
 //    @GetMapping("/movie")
@@ -90,6 +95,16 @@ public class MoviesController {
         userWatchesMovieRepository.save(userWatchesMovie);
 
         log.info("Watch list of the user {} has been updated",user);
+
+        Movie currentMovie = movieRepository.findByTitle(title);
+
+        List<Movie> moviesTobeShownOnDashboard = userDashboardRepository.findByUserId(user.getId());
+        Set<Movie> uniqueMoviesTobeShownOnDashboard = new LinkedHashSet<>(moviesTobeShownOnDashboard);
+        uniqueMoviesTobeShownOnDashboard.add(currentMovie);
+
+        moviesTobeShownOnDashboard = new ArrayList<>(uniqueMoviesTobeShownOnDashboard);
+
+        userDashboardRepository.save(new UserDashboard(user.getId(),moviesTobeShownOnDashboard));
 
         return "redirect:/movies/movie?title="+title;
     }
