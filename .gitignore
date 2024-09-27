@@ -37,4 +37,5 @@ mvnw
 toolsUsed.md
 src/main/resources/application.properties
 logs/
+bugs.md
 
