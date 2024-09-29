@@ -39,7 +39,10 @@
     <!-- Movie container   -->
     <div style="margin-left: 20px;"> <!-- Adjust margin-left as needed -->
         <h4 th:text="${currentMovie.title}"></h4>
-        <img src="/images/dummy.jpg" alt="Movie Poster" style="max-width: 400px; height: auto;">
+        <video width="800" height="600" controls>
+            <source src="/api/v1/videos/stream/range" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
         <div th:text="${currentMovie.overview}"></div>
         <br>
     </div>
