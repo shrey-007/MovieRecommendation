@@ -3,14 +3,19 @@ package com.MoviesRecommender.moviesModule.controller;
 import com.MoviesRecommender.moviesModule.entity.Movie;
 import com.MoviesRecommender.moviesModule.entity.UserDashboard;
 import com.MoviesRecommender.moviesModule.helper.MovieRecommender;
+import com.MoviesRecommender.moviesModule.helper.UpdateDashboard;
 import com.MoviesRecommender.moviesModule.repository.MovieRepository;
 import com.MoviesRecommender.moviesModule.repository.UserDashboardRepository;
+import com.MoviesRecommender.moviesModule.service.UserDashboardService;
 import com.MoviesRecommender.userModule.entity.User;
 import com.MoviesRecommender.userModule.entity.UserWatchesMovie;
 import com.MoviesRecommender.userModule.repository.UserWatchesMovieRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +39,12 @@ public class MoviesController {
 
     @Autowired
     private UserDashboardRepository userDashboardRepository;
+
+    @Autowired
+    private UserDashboardService userDashboardService;
+
+    @Autowired
+    private UpdateDashboard updateDashboard;
 
     /** Replaced by Async call */
 //    @GetMapping("/movie")
@@ -96,18 +107,14 @@ public class MoviesController {
 
         log.info("Watch list of the user {} has been updated",user);
 
-        Movie currentMovie = movieRepository.findByTitle(title);
-
-        List<Movie> moviesTobeShownOnDashboard = userDashboardRepository.findByUserId(user.getId());
-        Set<Movie> uniqueMoviesTobeShownOnDashboard = new LinkedHashSet<>(moviesTobeShownOnDashboard);
-        uniqueMoviesTobeShownOnDashboard.add(currentMovie);
-
-        moviesTobeShownOnDashboard = new ArrayList<>(uniqueMoviesTobeShownOnDashboard);
-
-        userDashboardRepository.save(new UserDashboard(user.getId(),moviesTobeShownOnDashboard));
+        //update the dashboard of the user
+        log.info("updating the dashboard of the user by calling the helper method");
+        List<Movie> movies = updateDashboard.dashboard2(user);
+        userDashboardRepository.save(new UserDashboard(user.getId(),movies));
 
         return "redirect:/movies/movie?title="+title;
     }
+
 
 
 }

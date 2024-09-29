@@ -1,51 +1,33 @@
-package com.MoviesRecommender.moviesModule.controller;
+package com.MoviesRecommender.moviesModule.helper;
 
 import com.MoviesRecommender.moviesModule.entity.Movie;
-import com.MoviesRecommender.moviesModule.helper.MovieRecommender;
-import com.MoviesRecommender.moviesModule.helper.UpdateDashboard;
 import com.MoviesRecommender.moviesModule.repository.MovieRepository;
-import com.MoviesRecommender.moviesModule.repository.UserDashboardRepository;
-import com.MoviesRecommender.moviesModule.service.UserDashboardService;
 import com.MoviesRecommender.userModule.entity.User;
 import com.MoviesRecommender.userModule.entity.UserWatchesMovie;
 import com.MoviesRecommender.userModule.repository.UserWatchesMovieRepository;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Controller
+@Component
 @Slf4j
-public class UserController {
+public class UpdateDashboard {
     @Autowired
-    MovieRepository movieRepository;
+    private UserWatchesMovieRepository userWatchesMovieRepository;
+    @Autowired
+    private MovieRepository movieRepository;
 
     @Autowired
-    UserWatchesMovieRepository userWatchesMovieRepository;
-
-    @Autowired
-    MovieRecommender movieRecommender;
-
-    @Autowired
-    UserDashboardRepository userDashboardRepository;
-
-    @Autowired
-    UserDashboardService userDashboardService;
-    @Autowired
-    UpdateDashboard updateDashboard;
-
-    @RequestMapping("/dashboard2")
-    public String dashboard(Model model){
+    private MovieRecommender movieRecommender;
+    public List<Movie> dashboard2(User user){
+        log.info("Helper method for getting dashboard is calles for the user {}",user);
 
         // get the user
-        User user=(User) model.getAttribute("user");
         log.info("Fetching movies watched by the user {} ",user);
 
         // First we will fetch all movies watched by the user earlier
@@ -103,29 +85,7 @@ public class UserController {
         Set<Movie> finalUniqueMovies = new LinkedHashSet<>(uniqueSimilarMovies);
         uniqueSimilarMovies = new ArrayList<>(finalUniqueMovies);
 
-        model.addAttribute("moviesList",uniqueSimilarMovies);
 
-        return "dashboard";
+        return uniqueSimilarMovies;
     }
-
-    @RequestMapping("/dashboard")
-    public String dashboardFromDatabase(Model model){
-        User user=(User) model.getAttribute("user");
-
-
-        List<Movie> movies = userDashboardService.getDashboardMovies(user.getId());
-        log.info("Getting user: {} dashboard from database {} ",user.getUsername(),movies);
-
-        if(movies==null){
-            log.info("dashboard is null, calling helper method");
-            movies=updateDashboard.dashboard2(user);
-        }
-
-        log.info("Got the dashboard for the user {}",user);
-
-        model.addAttribute("moviesList",movies);
-
-        return "dashboard";
-    }
-
 }
