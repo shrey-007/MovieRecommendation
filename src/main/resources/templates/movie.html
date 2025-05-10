@@ -39,7 +39,7 @@
     <!-- Movie container   -->
     <div style="margin-left: 20px;"> <!-- Adjust margin-left as needed -->
         <h4 th:text="${currentMovie.title}"></h4>
-        <video width="800" height="600" controls>
+        <video id="moviePlayer" width="800" height="600" controls>
             <source src="/api/v1/videos/stream/range" type="video/mp4">
             Your browser does not support the video tag.
         </video>
@@ -51,9 +51,9 @@
 </div>
 
 <div style="margin-left: 20px;">
-    <form action="/movies/updateWatchList">
+    <form id="watchForm" action="/movies/updateWatchList" method="get">
         <input type="hidden" name="title" th:value="${currentMovie.title}">
-        <button type="submit">Watched</button>
+<!--        <button type="submit">Watched</button>-->
     </form>
 </div>
 
@@ -97,10 +97,10 @@
 
 <script>
 $(document).ready(function() {
-var requestId = document.getElementById('hiddenRequestId').value;
-console.log("Request ID: ", requestId); // This should print the actual requestId
+    var requestId = document.getElementById('hiddenRequestId').value;
+    console.log("Request ID: ", requestId); // This should print the actual requestId
 
-
+    // Function to check movie recommendations
     function checkRecommendations() {
         $.ajax({
             url: '/movie/status',
@@ -139,8 +139,47 @@ console.log("Request ID: ", requestId); // This should print the actual requestI
 
     // Start checking for recommendations
     checkRecommendations();
+
+    // for the async request to the controller to save that the user has watched the movie
+    const video = document.getElementById('moviePlayer');
+    const form = document.getElementById('watchForm');
+    let hasWatched90Percent = false;
+
+    if (video) {
+        console.log("Video element found"); // Debugging statement
+        video.addEventListener('timeupdate', function() {
+            const percentageWatched = (video.currentTime / video.duration) * 100;
+            console.log(`Video watched: ${percentageWatched}%`); // Debugging statement
+
+            if (!hasWatched90Percent && percentageWatched >= 90) {
+                hasWatched90Percent = true;
+                console.log("Reached 90%, sending async request"); // Debugging statement
+
+                // Send asynchronous request when 90% watched
+                const movieTitle = document.querySelector('input[name="title"]').value;
+
+                // Construct the URL with query parameters for GET request
+                const url = `/movies/updateWatchList?title=${encodeURIComponent(movieTitle)}`; // Correctly define URL here
+
+                fetch(url, {
+                    method: 'GET'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Movie watchlist updated successfully');
+                    } else {
+                        console.error('Failed to update watchlist');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    } else {
+        console.error("Video element not found!");
+    }
 });
 </script>
+
 
 </body>
 

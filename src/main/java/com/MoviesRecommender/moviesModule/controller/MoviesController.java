@@ -96,24 +96,24 @@ public class MoviesController {
     }
 
 
-    @RequestMapping("/updateWatchList")
-    public String updateWatchListOfUser(@RequestParam String title, Model model){
-
-        User user=(User) model.getAttribute("user");
-
-        UserWatchesMovie userWatchesMovie = new UserWatchesMovie(user.getId(),title);
-
-        userWatchesMovieRepository.save(userWatchesMovie);
-
-        log.info("Watch list of the user {} has been updated",user);
-
-        //update the dashboard of the user
-        log.info("updating the dashboard of the user by calling the helper method");
-        List<Movie> movies = updateDashboard.dashboard2(user);
-        userDashboardRepository.save(new UserDashboard(user.getId(),movies));
-
-        return "redirect:/movies/movie?title="+title;
-    }
+//    @RequestMapping("/updateWatchList")
+//    public String updateWatchListOfUser(@RequestParam String title, Model model){
+//
+//        User user=(User) model.getAttribute("user");
+//
+//        UserWatchesMovie userWatchesMovie = new UserWatchesMovie(user.getId(),title);
+//
+//        userWatchesMovieRepository.save(userWatchesMovie);
+//
+//        log.info("Watch list of the user {} has been updated",user);
+//
+//        //update the dashboard of the user
+//        log.info("updating the dashboard of the user by calling the helper method");
+//        List<Movie> movies = updateDashboard.dashboard2(user);
+//        userDashboardRepository.save(new UserDashboard(user.getId(),movies));
+//
+//        return "redirect:/movies/movie?title="+title;
+//    }
 
 
 
