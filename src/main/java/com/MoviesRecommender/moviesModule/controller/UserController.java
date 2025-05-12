@@ -108,6 +108,7 @@ public class UserController {
         return "dashboard";
     }
 
+    // This is new dashboard function which is currently working
     @RequestMapping("/dashboard")
     public String dashboardFromDatabase(Model model){
         User user=(User) model.getAttribute("user");
