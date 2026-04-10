@@ -1,104 +1,62 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Movie List</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${currentMovie.title} + ' — CineMatch'">Movie — CineMatch</title>
+    <meta name="description" th:content="${currentMovie.overview}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-
-    <style>
-    .homeButton {
-        display: inline-block; /* Ensures the button stays on the left */
-        margin: 10px 0 10px 10px; /* Small margin on top and left to avoid touching the edge */
-    }
-
-    .button-link {
-        text-decoration: none; /* Remove underline */
-        padding: 8px 16px; /* Normal button padding */
-        background-color: #960000; /* Standard blue button color */
-        color: white; /* White text color */
-        font-size: 16px; /* Slightly larger font size for better readability */
-        border: none; /* No border */
-        border-radius: 5px; /* Slight rounding for a subtle modern look */
-        transition: background-color 0.3s ease; /* Smooth color transition on hover */
-    }
-
-    .button-link:hover {
-        color:black;
-        text-decoration:none;
-    }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/movie.css}">
 </head>
 <body>
-<div>
-    <div class="homeButton">
-        <a href="/dashboard" class="button-link">Home</a>
-    </div>
-    <br>
-    <br>
 
-    <!-- Movie container   -->
-    <div style="margin-left: 20px;"> <!-- Adjust margin-left as needed -->
-        <h4 th:text="${currentMovie.title}"></h4>
-        <video id="moviePlayer" width="800" height="600" controls>
+<!-- Back Navigation -->
+<div class="back-nav">
+    <a href="/dashboard" class="btn-ghost">← Back to Dashboard</a>
+</div>
+
+<!-- Movie Hero Section -->
+<div class="movie-hero">
+    <h1 class="movie-title gradient-text" th:text="${currentMovie.title}"></h1>
+
+    <!-- Video Player -->
+    <div class="video-container">
+        <video id="moviePlayer" controls>
             <source src="/api/v1/videos/stream/range" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <div th:text="${currentMovie.overview}"></div>
-        <br>
     </div>
 
-    <br>
+    <!-- Movie Overview -->
+    <div class="movie-overview" th:text="${currentMovie.overview}"></div>
 </div>
 
-<div style="margin-left: 20px;">
-    <form id="watchForm" action="/movies/updateWatchList" method="get">
-        <input type="hidden" name="title" th:value="${currentMovie.title}">
-<!--        <button type="submit">Watched</button>-->
-    </form>
-</div>
+<!-- Hidden form for watch tracking -->
+<form id="watchForm" action="/movies/updateWatchList" method="get" style="display:none;">
+    <input type="hidden" name="title" th:value="${currentMovie.title}">
+</form>
 
-<!-- THIS IS REPLACED BY JAVASCRIPT BELOW -->
-
-<!--<div class="container mt-4">-->
-<!--    <h1 class="mb-4">Similar Movies</h1>-->
-<!--    <div class="row">-->
-<!--        &lt;!&ndash; Iterate over movieList &ndash;&gt;-->
-<!--        <div class="col-md-4 mb-4" th:each="movie : ${similarMovies}">-->
-<!--            <a th:href="@{/movies/movie(title=${movie.title})}" class="card-link">-->
-<!--                <div class="card" id="movieCard">-->
-<!--&lt;!&ndash;                    <img th:src="@{/images/movie-placeholder.jpg}" class="card-img-top" alt="Movie Poster">&ndash;&gt;-->
-<!--                    <div class="card-body">-->
-<!--                        <h5 class="card-title" th:text="${movie.title}" style="color:#290118;" >Movie Title</h5>-->
-<!--                        <p class="card-title" th:text="${movie.overview}">Movie Title</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </a>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-<div class="container mt-4">
-    <h1 class="mb-4">Similar Movies</h1>
-    <div id="movieContent" class="row">
-        <!-- This content will be replaced by the recommendations once ready -->
+<!-- Similar Movies Section -->
+<div class="similar-section">
+    <h2 class="section-heading">Similar Movies</h2>
+    <div id="movieContent" class="movies-grid">
+        <!-- Loading placeholders -->
+        <div class="loading-placeholder"></div>
+        <div class="loading-placeholder"></div>
+        <div class="loading-placeholder"></div>
     </div>
-    <div th:value="${requestId}"></div>
 </div>
 
-
-<!--To paas to javascript-->
+<!--To pass to javascript-->
 <input type="hidden" id="hiddenRequestId" th:value="${requestId}"/>
 
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
 $(document).ready(function() {
     var requestId = document.getElementById('hiddenRequestId').value;
-    console.log("Request ID: ", requestId); // This should print the actual requestId
+    console.log("Request ID: ", requestId);
 
     // Function to check movie recommendations
     function checkRecommendations() {
@@ -114,16 +72,17 @@ $(document).ready(function() {
                     // Iterate over the returned movie data and display it
                     data.forEach(function(movie) {
                         $('#movieContent').append(
-                            `<div class="col-md-4 mb-4">
-                                <a href="/movies/movie?title=${movie.title}" class="card-link">
-                                    <div class="card" id="movieCard">
-                                        <div class="card-body">
-                                            <h5 class="card-title" style="color:#290118;">${movie.title}</h5>
-                                            <p class="card-title">${movie.overview}</p>
+                            `<a href="/movies/movie?title=${encodeURIComponent(movie.title)}" class="card-link">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${movie.title}</h5>
+                                        <p class="card-text">${movie.overview}</p>
+                                        <div class="card-footer-accent">
+                                            <span>▸</span> View details
                                         </div>
                                     </div>
-                                </a>
-                            </div>`
+                                </div>
+                            </a>`
                         );
                     });
                 } else {
@@ -140,30 +99,24 @@ $(document).ready(function() {
     // Start checking for recommendations
     checkRecommendations();
 
-    // for the async request to the controller to save that the user has watched the movie
+    // For the async request to the controller to save that the user has watched the movie
     const video = document.getElementById('moviePlayer');
     const form = document.getElementById('watchForm');
     let hasWatched90Percent = false;
 
     if (video) {
-        console.log("Video element found"); // Debugging statement
+        console.log("Video element found");
         video.addEventListener('timeupdate', function() {
             const percentageWatched = (video.currentTime / video.duration) * 100;
-            console.log(`Video watched: ${percentageWatched}%`); // Debugging statement
 
             if (!hasWatched90Percent && percentageWatched >= 90) {
                 hasWatched90Percent = true;
-                console.log("Reached 90%, sending async request"); // Debugging statement
+                console.log("Reached 90%, sending async request");
 
-                // Send asynchronous request when 90% watched
                 const movieTitle = document.querySelector('input[name="title"]').value;
+                const url = `/movies/updateWatchList?title=${encodeURIComponent(movieTitle)}`;
 
-                // Construct the URL with query parameters for GET request
-                const url = `/movies/updateWatchList?title=${encodeURIComponent(movieTitle)}`; // Correctly define URL here
-
-                fetch(url, {
-                    method: 'GET'
-                })
+                fetch(url, { method: 'GET' })
                 .then(response => {
                     if (response.ok) {
                         console.log('Movie watchlist updated successfully');
@@ -180,8 +133,5 @@ $(document).ready(function() {
 });
 </script>
 
-
 </body>
-
-
 </html>

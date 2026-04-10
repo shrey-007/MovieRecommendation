@@ -1,0 +1,112 @@
+/* ============================================
+   MOVIE DETAIL PAGE STYLES
+   ============================================ */
+
+/* ---------- Back Navigation ---------- */
+.back-nav {
+    padding: 16px 32px;
+}
+
+/* ---------- Movie Hero Section ---------- */
+.movie-hero {
+    padding: 0 32px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.movie-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+}
+
+/* ---------- Video Player ---------- */
+.video-container {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 28px;
+    background: #000;
+}
+
+.video-container video {
+    display: block;
+    width: 100%;
+    max-height: 540px;
+    object-fit: contain;
+    background: #000;
+}
+
+/* ---------- Movie Overview ---------- */
+.movie-overview {
+    padding: 24px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    margin-bottom: 48px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* ---------- Similar Movies Section ---------- */
+.similar-section {
+    padding: 0 32px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.similar-section .movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* Loading state for similar movies */
+.loading-text {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 40px 0;
+}
+
+.loading-dots::after {
+    content: '';
+    animation: dots 1.5s steps(3, end) infinite;
+}
+
+@keyframes dots {
+    0% { content: ''; }
+    33% { content: '.'; }
+    66% { content: '..'; }
+    100% { content: '...'; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .movie-hero {
+        padding: 0 16px 32px;
+    }
+
+    .movie-title {
+        font-size: 1.6rem;
+    }
+
+    .similar-section {
+        padding: 0 16px 40px;
+    }
+
+    .similar-section .movies-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .back-nav {
+        padding: 12px 16px;
+    }
+}

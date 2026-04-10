@@ -1,100 +1,295 @@
-/* Dark theme for movie cards */
-body {
-    background-color: #0f0a0a; /* Dark background color */
-    color: #ffffff; /* Light text color for all text */
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif; /* Sets a clean, sans-serif font */
+/* ============================================
+   DASHBOARD STYLES
+   ============================================ */
+
+/* ---------- Navbar ---------- */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: rgba(11, 13, 23, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    text-decoration: none;
+}
+
+/* ---------- Search ---------- */
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+}
+
+#search-input {
+    width: 100%;
+    padding: 10px 18px 10px 42px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    font-size: 0.9rem;
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+#search-input::placeholder {
+    color: var(--text-muted);
+}
+
+#search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+    background: var(--bg-surface);
+}
+
+/* Search icon (pseudo-element on container) */
+.search-container::before {
+    content: '🔍';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.6;
+}
+
+/* ---------- Search Results Dropdown ---------- */
+.search-result {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    display: none;
+    z-index: 1000;
+    overflow: hidden;
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.search-result .list-group {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.customList {
+    display: block;
+    padding: 12px 18px;
+    background: transparent;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+}
+
+.customList:hover {
+    background: var(--accent-subtle);
+    color: var(--accent-hover);
+    text-decoration: none;
+    padding-left: 24px;
+}
+
+.customList:last-child {
+    border-bottom: none;
+}
+
+/* ---------- Page Content ---------- */
+.page-content {
+    padding: 40px 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ---------- Movie Cards Grid ---------- */
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* ---------- Movie Card ---------- */
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+}
+
+.card-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
 .card {
-    height: 300px; /* Fixed height for uniform card size */
-    overflow: hidden; /* Hide overflowing content */
-    background-color: #960000; /* Dark background color */
-    color: #f39a9a; /* Light text color for contrast */
-    border: 1px solid #444; /* Subtle border for card */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
-    transition: transform 0.3s; /* Smooth transition for hover effect */
+    display: flex;
+    flex-direction: column;
+    height: 220px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-smooth);
+    position: relative;
+}
+
+/* Accent top-border gradient */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent-gradient);
+    opacity: 0;
+    transition: opacity var(--transition-smooth);
 }
 
 .card:hover {
-    transform: scale(1.05); /* Slight zoom effect on hover */
+    transform: translateY(-6px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-glow);
+}
+
+.card:hover::before {
+    opacity: 1;
 }
 
 .card-body {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    padding: 20px;
     height: 100%;
-    padding: 15px;
+    gap: 10px;
 }
 
+/* ---- FIXED CARD TITLE AREA ---- */
 .card-title {
-    font-size: 1.25rem;
-    margin-bottom: 8px;
-}
-
-.card-overview {
-    flex-grow: 1;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.35;
+    /* Clamp to exactly 2 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 0.9rem;
-    color: #cccccc; /* Slightly lighter color for overview text */
+    /* Reserve fixed height for 2 lines: font-size * line-height * 2 */
+    min-height: 2.7em;
+    max-height: 2.7em;
+    margin: 0;
+    flex-shrink: 0;
 }
 
-.card-link {
-    text-decoration: none;
-    color: inherit; /* Keeps link color consistent with text */
+/* ---- FIXED OVERVIEW AREA ---- */
+.card-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    /* Clamp to exactly 3 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+    margin: 0;
 }
 
-.card-img-top {
-    border-bottom: 1px solid #444; /* Border separating the image and body */
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-/* Container for search input */
-.search-container {
+/* ---- Card Footer Accent ---- */
+.card-footer-accent {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
     display: flex;
-    justify-content: center;
-    width: 100%;
-    padding: 0 20px; /* Adds horizontal padding */
-    position: relative; /* Necessary for absolute positioning of search results */
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
 }
 
-/* Search input styling */
-#search-input {
-    width: 500px; /* Desired width of the input */
-    max-width: 100%; /* Prevents the input from exceeding its container width */
-    box-sizing: border-box; /* Includes padding and border in the total width */
+.card-footer-accent span {
+    color: var(--accent);
 }
 
-/* Search result styling */
-.search-result {
-    position: absolute; /* Position relative to the closest positioned ancestor (.search-container) */
-    top: 100%; /* Positions the result directly below the input */
-    left: 50%; /* Start positioning from the center of the container */
-    transform: translateX(-50%); /* Center the element horizontally */
-    background: white;
-    width: 500px; /* Match the width of the input field */
-    padding: 10px;
-    border: 1px solid grey;
-    display: none; /* Hide the result by default */
-    color: black;
-    z-index: 1000; /* Ensures the result appears above other content */
+/* ---------- Animations for cards ---------- */
+.movies-grid .card-link {
+    animation: fadeInUp 0.4s ease forwards;
+    opacity: 0;
 }
 
-/* Custom list item styling */
-.customList {
-    background-color: #1c1b1b;
-    color: white;
+.movies-grid .card-link:nth-child(1) { animation-delay: 0.03s; }
+.movies-grid .card-link:nth-child(2) { animation-delay: 0.06s; }
+.movies-grid .card-link:nth-child(3) { animation-delay: 0.09s; }
+.movies-grid .card-link:nth-child(4) { animation-delay: 0.12s; }
+.movies-grid .card-link:nth-child(5) { animation-delay: 0.15s; }
+.movies-grid .card-link:nth-child(6) { animation-delay: 0.18s; }
+.movies-grid .card-link:nth-child(7) { animation-delay: 0.21s; }
+.movies-grid .card-link:nth-child(8) { animation-delay: 0.24s; }
+.movies-grid .card-link:nth-child(9) { animation-delay: 0.27s; }
+.movies-grid .card-link:nth-child(10) { animation-delay: 0.30s; }
+.movies-grid .card-link:nth-child(11) { animation-delay: 0.33s; }
+.movies-grid .card-link:nth-child(12) { animation-delay: 0.36s; }
+
+/* ---------- Loading Shimmer (for similar movies) ---------- */
+.loading-placeholder {
+    height: 220px;
+    background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-elevated) 50%, var(--bg-surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-lg);
 }
-.customList:hover {
-    background-color: black;
-    color: red;
-    text-decoration:none;
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .navbar {
+        padding: 14px 20px;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-container {
+        max-width: 100%;
+    }
 }
 
+@media (max-width: 640px) {
+    .movies-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
 
+    .page-content {
+        padding: 24px 16px;
+    }
 
-
+    .card {
+        height: 200px;
+    }
+}

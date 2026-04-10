@@ -1,58 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Movie List</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<!--    <style>-->
-<!--    .card {-->
-<!--        border: 1px solid #ddd;-->
-<!--        border-radius: 10px;-->
-<!--    }-->
-<!--    .card-img-top {-->
-<!--        border-bottom: 1px solid #ddd;-->
-<!--    }-->
-<!--    .card-body {-->
-<!--        text-align: center;-->
-<!--    }-->
-<!--</style>-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — CineMatch</title>
+    <meta name="description" content="Browse and discover movies with personalized recommendations.">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-
 </head>
 <body>
 
-<!-- Search Box-->
-<div class="search-container my-4">
-    <!--isee input lenge ki kya search krna hai and voh backend pr bhejege and result search result mai bhejege        -->
-    <!--onkeyup is an javascipt event, toh jaise hi user search bar mai kuch daalega toh search function call hoga      -->
-    <input onkeyup="search()" id="search-input" type="text" class="form-control" placeholder="Search">
-    <div class="search-result">
-        <!--this is search result-->
-    </div>
-</div>
-
-
-
-<div class="container mt-4">
-    <h1 class="mb-4">Movies</h1>
-    <div class="row">
-        <!-- Iterate over movieList -->
-        <div class="col-md-4 mb-4" th:each="movie : ${moviesList}">
-        <!-- A particular movie, iske uper kahi bhi click kro toh new page khulega isliye anchor tag mai daala hai -->
-            <a th:href="@{/movies/movie(title=${movie.title})}" class="card-link">
-                <div class="card">
-<!--                    <img th:src="@{/images/movie.jpg}" class="card-img-top" alt="Movie Poster">-->
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${movie.title}"  style="color:#290118;">Movie Title</h5>
-                        <p class="card-text" th:text="${movie.overview}">Movie Overview</p>
-                    </div>
-                </div>
-            </a>
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="/dashboard" class="navbar-brand gradient-text">🎬 CineMatch</a>
+    <div class="search-container">
+        <!--onkeyup is a javascript event, as soon as the user types in the search bar, the search function is called-->
+        <input onkeyup="search()" id="search-input" type="text" placeholder="Search movies...">
+        <div class="search-result">
+            <!--this is search result-->
         </div>
     </div>
+</nav>
+
+<!-- Page Content -->
+<div class="page-content">
+    <h2 class="section-heading">Discover Movies</h2>
+    <div class="movies-grid">
+        <!-- Iterate over movieList -->
+        <a th:each="movie : ${moviesList}" th:href="@{/movies/movie(title=${movie.title})}" class="card-link">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${movie.title}">Movie Title</h5>
+                    <p class="card-text" th:text="${movie.overview}">Movie Overview</p>
+                    <div class="card-footer-accent">
+                        <span>▸</span> View details
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:src="@{/js/dashboard.js}"></script>
 </body>
 </html>

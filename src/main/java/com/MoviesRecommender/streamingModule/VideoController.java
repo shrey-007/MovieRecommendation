@@ -29,7 +29,7 @@ public class VideoController {
     // but hum 1024 to 2048 ka data bhejege and so on
     @GetMapping("/stream/range")
     public ResponseEntity<Resource> streamVideoRange(@RequestHeader(value = "Range", required = false) String range) {
-        Path path = Paths.get("C:\\Users\\shrey\\Desktop\\combine stuff to manage space\\springboot\\MoviesRecommender\\src\\main\\resources\\videos\\sample.mp4");
+        Path path = Paths.get("C:\\Users\\shrey\\Desktop\\combine stuff to manage space\\springboot\\MoviesRecommender\\src\\main\\resources\\videos\\batman.mp4");
 
         Resource resource = new FileSystemResource(path);
 
