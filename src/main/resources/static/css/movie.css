@@ -41,6 +41,54 @@
     background: #000;
 }
 
+/* ---------- Buffering Overlay ---------- */
+.buffering-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10;
+}
+
+.buffering-content {
+    text-align: center;
+}
+
+.buffering-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    border-top-color: var(--accent-primary, #a78bfa);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.buffering-text {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.buffering-status {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    max-width: 320px;
+    line-height: 1.4;
+}
+
 /* ---------- Movie Overview ---------- */
 .movie-overview {
     padding: 24px;

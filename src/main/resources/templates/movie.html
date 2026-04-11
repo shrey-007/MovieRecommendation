@@ -22,8 +22,16 @@
 
     <!-- Video Player -->
     <div class="video-container">
-        <video id="moviePlayer" controls>
-            <source src="/api/v1/videos/stream/range" type="video/mp4">
+        <!-- Buffering Overlay -->
+        <div id="bufferingOverlay" class="buffering-overlay">
+            <div class="buffering-content">
+                <div class="buffering-spinner"></div>
+                <p class="buffering-text">Preparing stream<span class="loading-dots"></span></p>
+                <p id="bufferingStatus" class="buffering-status">Finding torrent sources...</p>
+            </div>
+        </div>
+        <video id="moviePlayer" controls preload="none">
+            <source id="videoSource" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
@@ -36,6 +44,9 @@
 <form id="watchForm" action="/movies/updateWatchList" method="get" style="display:none;">
     <input type="hidden" name="title" th:value="${currentMovie.title}">
 </form>
+
+<!-- Hidden field for movie title (used by JS) -->
+<input type="hidden" id="hiddenMovieTitle" th:value="${currentMovie.title}"/>
 
 <!-- Similar Movies Section -->
 <div class="similar-section">
@@ -56,7 +67,126 @@
 <script>
 $(document).ready(function() {
     var requestId = document.getElementById('hiddenRequestId').value;
+    var movieTitle = document.getElementById('hiddenMovieTitle').value;
     console.log("Request ID: ", requestId);
+    console.log("Movie Title: ", movieTitle);
+
+    // ========== TORRENT STREAMING LOGIC ==========
+
+    const video = document.getElementById('moviePlayer');
+    const videoSource = document.getElementById('videoSource');
+    const overlay = document.getElementById('bufferingOverlay');
+    const statusText = document.getElementById('bufferingStatus');
+
+    // Step 1: Prepare the stream (start torrent resolution in background)
+    function prepareStream() {
+        statusText.textContent = 'Finding torrent sources...';
+
+        $.ajax({
+            url: '/api/v1/videos/stream/prepare',
+            method: 'POST',
+            data: { title: movieTitle },
+            success: function(data) {
+                if (data.success) {
+                    statusText.textContent = 'Torrent found! Buffering...';
+                    console.log("Torrent preparation started:", data.infoHash);
+                    // Start polling for readiness
+                    pollStreamStatus();
+                } else {
+                    statusText.textContent = 'Could not find torrent: ' + data.message;
+                    console.error("Failed to prepare stream:", data.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                statusText.textContent = 'Error preparing stream. Please try again.';
+                console.error("Error preparing stream:", error);
+            }
+        });
+    }
+
+    // Step 2: Poll for stream readiness
+    var pollCount = 0;
+    function pollStreamStatus() {
+        $.ajax({
+            url: '/api/v1/videos/stream/status',
+            method: 'GET',
+            data: { title: movieTitle },
+            success: function(data) {
+                console.log("Stream status:", data);
+                pollCount++;
+
+                if (data.ready) {
+                    statusText.textContent = 'Stream ready! Starting playback...';
+                    console.log("Stream is ready!");
+                    // Set the video source and start playback
+                    startPlayback();
+                } else {
+                    statusText.textContent = 'Buffering... ' + (data.progress || '');
+                    // Continue polling every 3 seconds
+                    if (pollCount < 100) { // Max 5 minutes of polling
+                        setTimeout(pollStreamStatus, 3000);
+                    } else {
+                        statusText.textContent = 'Buffering taking too long. Try playing anyway.';
+                        startPlayback();
+                    }
+                }
+            },
+            error: function() {
+                if (pollCount < 100) {
+                    setTimeout(pollStreamStatus, 3000);
+                }
+            }
+        });
+    }
+
+    // Step 3: Set video source and start playback
+    function startPlayback() {
+        var streamUrl = '/api/v1/videos/stream/range?title=' + encodeURIComponent(movieTitle);
+        videoSource.src = streamUrl;
+        video.load();
+
+        // Hide overlay once video can play
+        video.addEventListener('canplay', function() {
+            overlay.style.display = 'none';
+            video.play().catch(function(e) {
+                console.log("Auto-play prevented:", e);
+            });
+        }, { once: true });
+
+        // Show overlay again if buffering stalls
+        video.addEventListener('waiting', function() {
+            overlay.style.display = 'flex';
+            statusText.textContent = 'Buffering...';
+        });
+
+        video.addEventListener('playing', function() {
+            overlay.style.display = 'none';
+        });
+
+        // Handle errors
+        video.addEventListener('error', function(e) {
+            console.error("Video error:", e);
+            statusText.textContent = 'Playback error. The torrent may still be loading.';
+            overlay.style.display = 'flex';
+            // Retry after a delay
+            setTimeout(function() {
+                statusText.textContent = 'Retrying...';
+                video.load();
+            }, 5000);
+        });
+
+        // Fallback: hide overlay after 10 seconds even if canplay doesn't fire
+        setTimeout(function() {
+            if (overlay.style.display !== 'none') {
+                overlay.style.display = 'none';
+            }
+        }, 10000);
+    }
+
+    // Start the streaming pipeline
+    prepareStream();
+
+    // ========== SIMILAR MOVIES LOGIC ==========
 
     // Function to check movie recommendations
     function checkRecommendations() {
@@ -99,8 +229,8 @@ $(document).ready(function() {
     // Start checking for recommendations
     checkRecommendations();
 
-    // For the async request to the controller to save that the user has watched the movie
-    const video = document.getElementById('moviePlayer');
+    // ========== WATCH TRACKING ==========
+
     const form = document.getElementById('watchForm');
     let hasWatched90Percent = false;
 
@@ -113,8 +243,8 @@ $(document).ready(function() {
                 hasWatched90Percent = true;
                 console.log("Reached 90%, sending async request");
 
-                const movieTitle = document.querySelector('input[name="title"]').value;
-                const url = `/movies/updateWatchList?title=${encodeURIComponent(movieTitle)}`;
+                const movieTitleVal = document.querySelector('input[name="title"]').value;
+                const url = `/movies/updateWatchList?title=${encodeURIComponent(movieTitleVal)}`;
 
                 fetch(url, { method: 'GET' })
                 .then(response => {

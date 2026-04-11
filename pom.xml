@@ -64,6 +64,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
+		<!-- libtorrent4j for torrent streaming -->
+		<dependency>
+			<groupId>org.libtorrent4j</groupId>
+			<artifactId>libtorrent4j</artifactId>
+			<version>2.1.0-39</version>
+		</dependency>
+		<dependency>
+			<groupId>org.libtorrent4j</groupId>
+			<artifactId>libtorrent4j-windows</artifactId>
+			<version>2.1.0-39</version>
+		</dependency>
 	</dependencies>
 
 	<build>
